@@ -1,5 +1,6 @@
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+from mapleFont import *
 
 def getData(directory):
 

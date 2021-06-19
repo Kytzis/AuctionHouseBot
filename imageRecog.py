@@ -159,6 +159,12 @@ def getPage(saveFile):
     return 1
 
 
+def getAllPages(saveFile):
+    while True:
+        if not getPage(saveFile):
+            break
+
+
 if __name__ == '__main__':
 
     query = input('What did you search for: ')
@@ -166,7 +172,4 @@ if __name__ == '__main__':
     file = open(f'output\\{query}_{int(time())}.txt', 'a')
     file.write(f'    Item count   Total Price    Unit Price\n')
     
-    while True:
-        print('Getting page')
-        if not getPage(file):
-            break
+    getAllPages(file)

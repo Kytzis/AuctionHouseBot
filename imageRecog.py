@@ -139,17 +139,34 @@ def getData(img):
         return [0, 0, 0]
 
 
+def getPage(saveFile):
+
+    saveWindow('image\scrnsht.png')
+    images = splitImage('image\scrnsht.png')
+
+    windowLocation = pyautogui.locateOnScreen('image\AHWindow.png', confidence=0.8)
+
+    for image in images:
+        data = getData(image)
+
+        if data[0] == 0:        # If you went past the last data point
+            return 0
+
+        saveFile.write(f'{data[0]:>14},{data[1]:>13},{data[2]:>13}\n')
+
+    pyautogui.click(windowLocation[0]+675, windowLocation[1]+160)
+
+    return 1
+
 
 if __name__ == '__main__':
 
     query = input('What did you search for: ')
+
+    file = open(f'output\\{query}_{int(time())}.txt', 'a')
+    file.write(f'    Item count   Total Price    Unit Price\n')
     
-    saveWindow('image\scrnsht.png')
-    images = splitImage('image\scrnsht.png')
-
-    with open(f'output\\{query}_{int(time())}.txt', 'a') as file:
-        file.write(f'    Item count   Total Price    Unit Price\n')
-
-        for image in images:
-            data = getData(image)
-            file.write(f'{data[0]:>14}{data[1]:>14}{data[2]:>14}\n')
+    while True:
+        print('Getting page')
+        if not getPage(file):
+            break

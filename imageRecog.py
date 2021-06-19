@@ -1,16 +1,29 @@
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import pyautogui
+from os import remove
+
 from mapleFont import *
 
-# Offset used for y since Im taking screenshots manually and they dont lign up perfectly
-abc = 1
+
+def saveWindow(directory):
+    pyautogui.screenshot(directory, region=pyautogui.locateOnScreen('image\AHWindow.png', confidence=0.8))
+
+
+def splitImage(directory):
+    images = []
+
+    raw = mpimg.imread(directory)
+    remove(directory)
+
+    for i in range(9):
+        images.append(raw[204+55*i:258+55*i, 276:1007])
+
+    return images
 
 
 
-def getData(directory):
-
-    img = mpimg.imread(directory)
-
+def getData(img):
 
     # Apply black/white filter for ease of read
     brightnessThreshold = .25
@@ -28,19 +41,19 @@ def getData(directory):
 
     # Crop down image to only the area with price (given by where parentheses are)
     numStart = -1
-    for pixel in range(200, len(img[34])):
-        if img[34+abc][pixel][0] == 1:
+    for pixel in range(200, len(img[35])):
+        if img[35][pixel][0] == 1:
             numStart = pixel
             break
     numEnd = -1
-    for pixel in range(len(img[34])-150, 0, -1):
-        if img[34+abc][pixel][0] == 1:
+    for pixel in range(len(img[35])-150, 0, -1):
+        if img[35][pixel][0] == 1:
             numEnd = pixel+1
             break
-
+        
 
     # Crop down, and offset for parentheses
-    cropped = img[17+abc:42+abc, numStart+4:numEnd-4]
+    cropped = img[18:43, numStart+4:numEnd-4]
 
 
     # Loop through first number
@@ -119,8 +132,6 @@ def getData(directory):
         # Move to next number
         xOffset += 7
 
-    plt.imshow(cropped)
-    plt.show()
 
     print('Total price: ' + totPrice)
     print('Price per item: ' + price)
@@ -129,4 +140,9 @@ def getData(directory):
 
 
 if __name__ == '__main__':
-    getData('./test3.png')
+    # getData('./test3.png')
+    saveWindow('image\scrnsht.png')
+    images = splitImage('image\scrnsht.png')
+
+    for image in images:
+        getData(image)

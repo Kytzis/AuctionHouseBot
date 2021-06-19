@@ -2,6 +2,7 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import pyautogui
 from os import remove
+from time import time
 
 from mapleFont import *
 
@@ -132,17 +133,23 @@ def getData(img):
         # Move to next number
         xOffset += 7
 
-
-    print('Total price: ' + totPrice)
-    print('Price per item: ' + price)
-    print('Items for sale: ' + str(int(totPrice)//int(price)))
+    try:
+        return [int(totPrice)//int(price), totPrice, price]
+    except ValueError:
+        return [0, 0, 0]
 
 
 
 if __name__ == '__main__':
-    # getData('./test3.png')
+
+    query = input('What did you search for: ')
+    
     saveWindow('image\scrnsht.png')
     images = splitImage('image\scrnsht.png')
 
-    for image in images:
-        getData(image)
+    with open(f'output\\{query}_{int(time())}.txt', 'a') as file:
+        file.write(f'    Item count   Total Price    Unit Price\n')
+
+        for image in images:
+            data = getData(image)
+            file.write(f'{data[0]:>14}{data[1]:>14}{data[2]:>14}\n')
